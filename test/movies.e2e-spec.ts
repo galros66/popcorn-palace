@@ -3,7 +3,6 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { CreateMovieDto } from '../src/movies/dto/create-movie.dto';
-import { MoviesModule } from '../src/movies/movies.module';
 import { createNewDataSource} from '../src/database/data-source';
 import { DataSource } from 'typeorm';
 

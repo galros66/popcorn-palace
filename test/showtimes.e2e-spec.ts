@@ -141,8 +141,6 @@ describe('ShowtimesConteoller (e2e)', () => {
   })
 
   it('POST /showtimes/update/:id - should throw NotFoundException when try to update a showtime that not exists', async () => {
-    movieId = (await request(app.getHttpServer()).post('/movies').send(sampleMovie).expect(200)).body.id;
-    
     let updateShowtime: CreateShowtimeDto = { 
       movieId: movieId,
       price: 20.2,
@@ -156,8 +154,6 @@ describe('ShowtimesConteoller (e2e)', () => {
   });
 
   it('POST /showtimes - should throw BadRequestException when create a new invalid showtime with total time smaller than movie duration', async () => {
-    movieId = (await request(app.getHttpServer()).post('/movies').send(sampleMovie).expect(200)).body.id;
-    
     const invalidShowtime: CreateShowtimeDto = { 
       movieId: movieId, 
       price: 20.2,
@@ -170,8 +166,6 @@ describe('ShowtimesConteoller (e2e)', () => {
   });
 
   it('POST /showtimes - should throw BadRequestException when create a new invalid showtime that start before the movie releaseYear', async () => {
-    movieId = (await request(app.getHttpServer()).post('/movies').send(sampleMovie).expect(200)).body.id;
-    
     const invalidShowtime: CreateShowtimeDto = { 
       movieId: movieId, 
       price: 20.2,
@@ -183,9 +177,7 @@ describe('ShowtimesConteoller (e2e)', () => {
     const response = await request(app.getHttpServer()).post('/showtimes').send(invalidShowtime).expect(400);
   });
 
-  it('Overlapping Showtimes Check - should throw BadRequestException when create or update an invalid showtime that overlapping showtimes for the same theater', async () => {
-    movieId = (await request(app.getHttpServer()).post('/movies').send(sampleMovie).expect(200)).body.id;
-    
+  it('Overlapping Showtimes Check - should throw BadRequestException when create or update an invalid showtime that overlapping showtimes for the same theater', async () => {    
     let showtime: CreateShowtimeDto = { 
       movieId: movieId, 
       price: 20.2,
