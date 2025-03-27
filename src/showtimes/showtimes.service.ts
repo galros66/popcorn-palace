@@ -86,7 +86,6 @@ export class ShowtimesService {
     const startTime = new Date(showtime.startTime);
     const endTime = new Date(showtime.endTime); 
     const diffInMinutes = (endTime.getTime() - startTime.getTime()) / (60 * 1000);
-
     // Check if movie exists
     if (! movie) {
       throw new NotFoundException(`Invalid Input: Movie with ID ${showtime.movieId} Not Found!`);
@@ -94,17 +93,24 @@ export class ShowtimesService {
     
     // Check if the movie release year fit to the start year.
     if (startTime.getFullYear() < movie.releaseYear) {
-      throw new BadRequestException('Invalid Input: The movie release year not fit to the start time showtime.')
+      throw new BadRequestException(`Invalid Input: The movie release year [${movie.releaseYear}] not fit to the start time showtime.`)
     }
+    const messages: string[] = [] 
     // Check if the startTime and endTime are sufficient for the movie duration.
     if (diffInMinutes < movie.duration) {
-      throw new BadRequestException('Invalid Input: The start time and end time of the showtime are not sufficient for the movie duration.');
+      messages.push(`Invalid Input: The start time and end time of the showtime are not sufficient for the movie duration [${movie.duration} minutes].`);
     }
 
     // Check if there is a overlapping showtimes.
     if (await this.checkForShowtimeConflicts(showtime.id, startTime, endTime, showtime.theater)) {
-        throw new BadRequestException(`Invalid Input: Overlapping showtimes for the same theater with ID ${showtime.theater}!`);
-        
+      messages.push(`Invalid Input: Overlapping showtimes for the same theater with title: ${showtime.theater}`);        
+    }
+    
+    if (messages.length == 1) {
+      throw new BadRequestException(messages[0]);
+    }
+    else if (messages.length == 2) {
+      throw new BadRequestException(messages);
     }
 
   }
@@ -113,7 +119,7 @@ export class ShowtimesService {
     const result = await this.showtimesRepository.delete({ id: showtimeId })
     // check if showtime was exists and delete
     if ( result.affected === 0) {
-      throw new NotFoundException(`Invalid Input: Showtime with ID ${showtimeId} Not Found!`)
+      throw new NotFoundException(`Invalid Input: Showtime with ID ${showtimeId} Not Found!`);
     }
   }
 

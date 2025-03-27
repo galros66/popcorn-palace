@@ -19,7 +19,7 @@ export class BookingsService {
     }
     // check if the seat number is already booked
     if (await this.checkBookingExist(booking.showtimeId, booking.seatNumber)) {
-      throw new BadRequestException(`Invalid Input: The Seat Number ${booking.seatNumber} is allready booked in showtime with ID ${booking.showtimeId}.`)
+      throw new BadRequestException(`Invalid Input: The Seat Number ${booking.seatNumber} is already booked in showtime with ID ${booking.showtimeId}.`)
         
     }
     // create new booking

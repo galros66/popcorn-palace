@@ -1,7 +1,8 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { Repository } from 'typeorm';
 import { Movie } from './movie.entity';
+import { title } from 'process';
 
 @Injectable()
 export class MoviesService {
@@ -22,6 +23,7 @@ export class MoviesService {
   }
   
   async addMovie(movie: CreateMovieDto): Promise<Movie> {
+    await this.checkMovieExists(movie.title);
     // create new movie
     const newMovie = this.moviesRepository.create(
       {
@@ -44,6 +46,7 @@ export class MoviesService {
     if (!existingMovie) {
       throw new NotFoundException(`Invalid Input: Movie with '${title}' title Not Found!`);
     }
+    await this.checkMovieExists(updatedMovie.title, existingMovie.id);
     // update the movie
     existingMovie.title = updatedMovie.title;
     existingMovie.genre = updatedMovie.genre;
@@ -62,4 +65,14 @@ export class MoviesService {
     }
   }
 
+  async checkMovieExists(title: string, id: number = undefined): Promise<void> {
+    let query = await this.moviesRepository.createQueryBuilder('movie').where('movie.title = :title', {title});
+    if (id) {
+      query = query.andWhere('movie.id != :id', {id});
+    }
+    
+    if (await query.getCount() > 0) {
+      throw new BadRequestException(`A movie with title '${title}' is already exists.`)
+    }
+  }
 }
