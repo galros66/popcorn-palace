@@ -34,12 +34,6 @@ The system provides the following APIs:
 - **Showtime API**: Manages movies showtime on the theaters.
 - **Booking API**: Manages the movie tickets booking.
 
-## Technical Aspects
-The system is built using Java Spring Boot, leveraging its robust framework for creating RESTful APIs. Data persistence can be managed using an in-memory database like H2 for simplicity, or a more robust solution like PostgreSQL for production.
-
-## Homework Task
-Candidates are expected to design and implement the above APIs, adhering to RESTful principles.
-
 ## APIs
 
 ### Movies  APIs
@@ -73,9 +67,31 @@ Candidates are expected to design and implement the above APIs, adhering to REST
 
 
 ## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
+This project is a movie booking system built using NestJS and TypeORM. It provides an API for managing movies, showtimes, and bookings.
+### Key Features
+* **Movies Management** – Add, Update, Delete and Get a list of all movies with details such as: 
+  - id: unique integer key
+  - title: unique not empty string (I assume the title must be unique, because it is used as a key to update and delete movie)
+  - genre: not empty string
+  - duration: positive integer
+  - rating: non-negative float number
+  - release year: valid integer year (at least 1900)
+* **Showtimes Management** - Add, Update, Delete and Get showtime by id with details such as:
+  - id: unique integer key
+  - movieId: integer, must exist in the movies database.
+  - price: non-negative number
+  - startTime: datetime string
+  - endTime: datetime string 
+    * ***Note*** - The showtime frame time can't overlap other showtime and must be at least equal to the movie duration, and also showtime can't start before the release year. 
+* **Bookings Management** - Only allows adding booking with details such as:
+  - bookingId - uuid
+  - showtimeId: integer, must exist in the showtimes database
+  - userId: uuid
+  - seatNumber: positive integer, can't be double-booked for the same seat
+* **Database** - Uses 'Postgres' database and manage the data using TypeOrm's DataSource.
+* **Validation** - Uses class-validator to validate the objects DTO and applies ValidationPipe in the main file to enforce validation across all modules.
+* **Logging & Exception Filters** - Logs all requests and errors to the console.
+* **Testing** - Implemented unit tests using *Jest* to test controllers in each module and and e2e tests to verify API behavior. 
 ## Project Structure
 ```txt
 src
@@ -125,38 +141,5 @@ src
             create-showtime.dto.ts
 ```
 
-## Installation
-
-```bash
-$ npm install
-```
-
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+## Runnig & Testing
+To run and test the project, refer to the instructions provided in the [Instructions.md](Instructions.md) file for detailed guidance on how to run the application, set up the environment, and execute tests.
